@@ -12,6 +12,8 @@ class Router
   {
    $this->request = $request;
   }
+// when trying to invoke get() which is not defined, __call is invoked
+// dynamically create associative array that map routes to callbacks
 
   function __call($name, $args)
   {
@@ -23,6 +25,7 @@ class Router
     }
 
     $this->{strtolower($name)}[$this->formatRoute($route)] = $method;
+    // where is the call to $method?
   }
 
   /**
