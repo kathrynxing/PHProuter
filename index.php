@@ -1,23 +1,38 @@
 <?php
+include("header.html");
 
-include_once 'Request.php';
-include_once 'Router.php';
-$router = new Router(new Request);
+if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+    if($_GET['page']=="disclaimer"){
+        include("disclaimer.html");
+    }else{
+        include("mainpage.html");
+    }
+}else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    echo ("POST rout");
+    // check validity of file get 
+    // if valid, convert and get $html_converted_file
 
-$router->get('/', function() {
-  return <<<HTML
-  <h1>Hello world</h1>
-HTML;
-});
+    
+    $target_dir = 'uploads/';
+    $uploadedFileBasename =
+      pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_FILENAME);
+      $uploadedFileExtension =
+      pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_EXTENSION);
+    $file = $_FILES['fileToUpload']['name'];
+    
+    
+    $target_file = $target_dir . $uploadedFileBasename. "." . $uploadedFileExtension;
 
+    $test = move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file);
+    if ($test){
+        echo("succesff upload");
+    }else{
+        echo("ohoohhoo");
+    }
+    $GLOBALS['html_converted_file'] = $target_file;
+    // pass to download.php page
+    include("download.php");
+    
+}
 
-$router->get('/profile', function($request) {
-  return <<<HTML
-  <h1>Profile</h1>
-HTML;
-});
-
-$router->post('/data', function($request) {
-
-  return json_encode($request->getBody());
-});
+include("footer.html");
